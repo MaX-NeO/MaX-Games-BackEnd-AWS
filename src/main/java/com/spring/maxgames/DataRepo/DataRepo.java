@@ -9,6 +9,8 @@ import com.spring.maxgames.DataModel.Data;
 
 public interface DataRepo extends JpaRepository<Data, Long> {
 	
+	List<Data> findByAuthId(Long authId);
+	
 	//Get Each Categories data
 	List<Data> findByGametype(String gametype);
 	

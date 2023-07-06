@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.spring.maxgames.AuthModel.Auth;
+import com.spring.maxgames.AuthModel.Admin;
+import com.spring.maxgames.AuthModel.User;
 import com.spring.maxgames.DataModel.Data;
 import com.spring.maxgames.PostModel.Post;
 import com.spring.maxgames.Service.MaxService;
@@ -24,15 +25,29 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api")
-// @CrossOrigin("https://max-games.netlify.app/")
-@CrossOrigin(origins = "*")
+@CrossOrigin("*")
 public class MaxController {
 
 	@Autowired
 	private MaxService servicex;
 	
 	//Auth
-	@Tag(name = "Signin",description = "Login Endpoint")
+	
+	@Tag(name = "Admin Signin",description = "Admin Login Endpoint")
+	@PostMapping("/admin/signin")
+	private String Loginadmin(@RequestBody Map<String, String> Logina) {
+	    String username = Logina.get("username");
+	    String password = Logina.get("password");
+	    String result = servicex.Loginadmin(username, password);
+	    return result;
+	}
+	@Tag(name = "Add Admin",description = "Add Admin (Swagger Only !)")
+	@PostMapping("/admin/add")
+	private Admin AddAdmin(@RequestBody Admin admin) {
+		return servicex.addAdmin(admin);
+	}
+	
+	@Tag(name = "User Signin",description = "User Login Endpoint")
 	@PostMapping("/auth/signin")
 	private String Login(@RequestBody Map<String, String> Loginx) {
 	    String username = Loginx.get("username");
@@ -42,14 +57,20 @@ public class MaxController {
 	}
 	@Tag(name = "Active Users", description = "Current Active Accounts")
 	@GetMapping("/auth/users")
-	private List<Auth> Users() {
+	private List<User> Users() {
 		return servicex.Users();
 	}
-	@Tag(name = "Signup",description = "Signup Endpoint")
+	@Tag(name = "User Signup",description = "User Signup Endpoint")
     @PostMapping("/auth/signup")
-    public String Signup(@RequestBody Auth userx) {
+    public String Signup(@RequestBody User userx) {
         return servicex.SignUpx(userx);
     }
+
+	@Tag(name = "Active Users", description = "Current Active Accounts")
+	@GetMapping("/auth/user/{username}")
+	private User FindUser(@PathVariable String username) {
+		return servicex.FindUser(username);
+	}	
 	
 	//Data
 	@Tag(name = "Active Games", description = "Current Active Games")
@@ -62,10 +83,22 @@ public class MaxController {
 	private Optional<Data> viewGame(@PathVariable Long id) {
 		return servicex.viewGame(id);
 	}
-	@Tag(name = "Add Game", description = "Add New Game")
+	@Tag(name = "Admin Add Game", description = "Add New Game (User)")
 	@PostMapping("/game")
 	private Data addGame(@RequestBody Data gamex) {
 		return servicex.addGame(gamex);
+	}	
+	
+	@Tag(name = "User Active Games", description = "User's Current Active Games")
+	@GetMapping("/game/get/{id}")
+	private List<Data> ListGameUser(@PathVariable Long id){
+		return servicex.ListGameUser(id);
+	}
+	
+	@Tag(name = "User Add Game", description = "Add New Game (User)")
+	@PostMapping("/game/{username}")
+	private Data addGameUser(@RequestBody Data gamex, @PathVariable String username) {
+		return servicex.addGameUser(gamex,username);
 	}
 	@Tag(name = "Edit Game", description = "Edit Exsisting Game")
 	@PutMapping("/game/{id}")
@@ -79,22 +112,22 @@ public class MaxController {
 	}
 	@Tag(name = "Sort Games By Field (Ascending)", description = "Sort Games By Field(Any Field) [Ascending Order]")
 	@GetMapping("/game/x/a/{field}")
-	private List<Data> sortGamesA(@PathVariable("field") String field) {
+	private List<Data> sortGamesA(@PathVariable String field) {
 		return servicex.sortGameA(field);
 	}
 	@Tag(name = "Sort Games By Field (Descending)", description = "Sort Games By Field(Any Field) [Descending Order]")
 	@GetMapping("/game/x/d/{field}")
-	private List<Data> sortGamesD(@PathVariable("field") String field){
+	private List<Data> sortGamesD(@PathVariable String field){
 		return servicex.sortGameD(field);
 	}
 	@Tag(name = "Paggination Page,Size", description = "Paggination Using with [Page Number]/[Data Size]")
 	@GetMapping("/game/x/{offset}/{size}")
-	private List<Data> pageGames(@PathVariable("offset") int offset, @PathVariable("size") int size){
+	private List<Data> pageGames(@PathVariable int offset, @PathVariable int size){
 		return servicex.pagingGames(offset, size);
 	}
 	@Tag(name = "Paggination Page,Size & Sorting by Field", description = "Paggination Using with [Page Number]/[Data Size] & Sorting with /[Field]")
 	@GetMapping("/game/x/{offset}/{size}/{field}")
-	private List<Data> sortpageGames(@PathVariable("offset") int offset,@PathVariable("size") int size,@PathVariable("field") String field ){
+	private List<Data> sortpageGames(@PathVariable int offset,@PathVariable int size,@PathVariable String field ){
 		return servicex.pagingsortingGames(offset, size, field);
 	}
 	@Tag(name="Find Game by Category", description = "Find a Games by Categories")

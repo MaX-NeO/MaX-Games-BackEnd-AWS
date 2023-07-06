@@ -1,0 +1,9 @@
+com\spring\maxgames\Service\MaxService.class
+com\spring\maxgames\DataRepo\DataRepo.class
+com\spring\maxgames\AuthRepo\AuthRepo.class
+com\spring\maxgames\DataModel\Data.class
+com\spring\maxgames\MaxGamesApplication.class
+com\spring\maxgames\PostModel\Post.class
+com\spring\maxgames\PostRepo\PostRepo.class
+com\spring\maxgames\AuthModel\Auth.class
+com\spring\maxgames\Controller\MaxController.class

@@ -9,8 +9,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.spring.maxgames.AuthModel.Auth;
-import com.spring.maxgames.AuthRepo.AuthRepo;
+import com.spring.maxgames.AuthModel.Admin;
+import com.spring.maxgames.AuthModel.User;
+import com.spring.maxgames.AuthRepo.AdminRepo;
+import com.spring.maxgames.AuthRepo.UserRepo;
 import com.spring.maxgames.DataModel.Data;
 import com.spring.maxgames.DataRepo.DataRepo;
 import com.spring.maxgames.PostModel.Post;
@@ -19,15 +21,36 @@ import com.spring.maxgames.PostRepo.PostRepo;
 @Service
 public class MaxService {
 	@Autowired
-	private AuthRepo aRepo;
+	private UserRepo uRepo;
 	@Autowired
 	private DataRepo dRepo;
 	@Autowired
+	private AdminRepo aRepo;
+	@Autowired
 	private PostRepo pRepo;
 
-//Login
+// Admin Login
+	public String Loginadmin(String username, String password) {
+		Admin adminx = aRepo.findByUsername(username);
+		if (adminx == null) {
+			return "Invalid User !";
+		} else {
+			if (adminx.getPassword().equals(password)) {
+				return "Login Successful !";
+			} else {
+				return "Invalid Password";
+			}
+		}
+	}
+// Add Admin
+	public Admin addAdmin(Admin admin) {
+		return aRepo.save(admin);
+	}
+	
+
+//User Login
 	public String Loginx(String username, String password) {
-		Auth userx = aRepo.findByusername(username);
+		User userx = uRepo.findByUsername(username);
 		if (userx == null) {
 			return "Invalid User !";
 		} else {
@@ -39,12 +62,12 @@ public class MaxService {
 		}
 	}
 
-//SignUp
-	public String SignUpx(Auth userx) {
+//User SignUp
+	public String SignUpx(User userx) {
 		String username = userx.getUsername();
-		Auth userxAuth = aRepo.findByusername(username);
+		User userxAuth = uRepo.findByUsername(username);
 		if (userxAuth == null) {
-			aRepo.save(userx);
+			uRepo.save(userx);
 			return "Signup Successful !";
 		} else {
 			if (userxAuth.getUsername().equals(username)) {
@@ -55,9 +78,15 @@ public class MaxService {
 		}
 	}
 
-//Users
-	public List<Auth> Users() {
-		return aRepo.findAll();
+//Users List
+	public List<User> Users() {
+		return uRepo.findAll();
+	}
+
+// User Data
+	public User FindUser(String user) {
+		return uRepo.findByUsername(user);
+
 	}
 
 //List Games
@@ -70,9 +99,29 @@ public class MaxService {
 		return dRepo.findById(id);
 	}
 
+//List Game User
+	public List<Data> ListGameUser(Long id) {
+		List<Data> data = dRepo.findByAuthId(id);
+		if (!data.isEmpty()) {
+			return data;
+		} else {
+			return null;
+		}
+	}
+
 //Add Game
 	public Data addGame(Data gamex) {
 		return dRepo.save(gamex);
+	}
+
+// Add Game User
+	public Data addGameUser(Data gamex, String username) {
+		User user = uRepo.findByUsername(username);
+		if (user != null) {
+			gamex.setAuth(user);
+			return dRepo.save(gamex);
+		}
+		return null;
 	}
 
 //Edit Game

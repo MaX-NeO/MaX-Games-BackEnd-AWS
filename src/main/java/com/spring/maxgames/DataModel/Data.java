@@ -1,9 +1,13 @@
 package com.spring.maxgames.DataModel;
 
+import com.spring.maxgames.AuthModel.User;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -23,6 +27,11 @@ public class Data {
 	private String coverurl1;
 	private String coverurl2;
 	private String coverurl3;
+    @ManyToOne
+    @JoinColumn(name = "auth_id")
+    private User auth;
+	
+	
 	public Long getId() {
 		return id;
 	}
@@ -94,6 +103,12 @@ public class Data {
 	}
 	public void setCoverurl3(String coverurl3) {
 		this.coverurl3 = coverurl3;
+	}
+	public User getAuth() {
+		return auth;
+	}
+	public void setAuth(User auth) {
+		this.auth = auth;
 	}
 
 
