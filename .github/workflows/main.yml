@@ -1,4 +1,4 @@
-name: Docker CI [DF->IMG]
+name: Docker CI Sptring [DF->IMG]
 
 on:
   push:
@@ -18,7 +18,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag ${{ secrets.DOCKER_USERNAME }}/max-games
+        run: docker build . --file Dockerfile --tag ${{ secrets.DOCKER_USERNAME }}/max-games-spring
 
       - name: Docker Push
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/max-games
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/max-games-spring
