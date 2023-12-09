@@ -10,7 +10,7 @@ import jakarta.persistence.Table;
 @Table(name = "post")
 public class Post {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String posttitle;
 	private String postcontent;

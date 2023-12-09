@@ -14,7 +14,7 @@ import jakarta.persistence.Table;
 @Table
 public class Data {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String gamename;
 	private int releaseyear;

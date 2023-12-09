@@ -1,0 +1,55 @@
+### Spring Boot ###
+# Target directory
+/target/
+
+# Gradle files
+*.log
+.gradle/
+build/
+
+# IntelliJ
+*.iml
+.idea/
+*.iws
+*.ipr
+
+# Eclipse
+.classpath
+.project
+.settings/
+bin/
+*.launch
+
+# Spring Boot DevTools
+.restart
+
+# STS (Spring Tool Suite)
+.springBeans
+.springServer
+sts-wtp-server/
+
+### Java ###
+*.class
+*.jar
+
+# Package Files #
+*.war
+*.ear
+
+# Logs and databases
+*.log
+*.sql
+*.sqlite
+
+# Gradle Wrapper
+gradle-wrapper.jar
+gradle-wrapper.properties
+
+# Kotlin
+*.kotlin_module
+
+# Local configuration file (e.g., application-dev.yml)
+/application-*.yml
+
+# Spring Boot artifact
+spring-boot-starter-*.jar
