@@ -3,7 +3,7 @@ set /p commit_message="Enter commit message: "
 
 git add .
 git commit -m "%commit_message%"
-git push origin main
+git push origin master
 
-echo Commit to main branch complete.
+echo Commit to master branch complete.
 pause
