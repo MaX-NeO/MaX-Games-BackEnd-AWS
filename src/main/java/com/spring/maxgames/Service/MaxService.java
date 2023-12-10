@@ -15,8 +15,8 @@ import com.spring.maxgames.AuthRepo.AdminRepo;
 import com.spring.maxgames.AuthRepo.UserRepo;
 import com.spring.maxgames.DataModel.Data;
 import com.spring.maxgames.DataRepo.DataRepo;
-import com.spring.maxgames.PostModel.Post;
-import com.spring.maxgames.PostRepo.PostRepo;
+import com.spring.maxgames.EventModel.Events;
+import com.spring.maxgames.EventRepo.EventsRepo;
 
 @Service
 public class MaxService {
@@ -27,7 +27,7 @@ public class MaxService {
 	@Autowired
 	private AdminRepo aRepo;
 	@Autowired
-	private PostRepo pRepo;
+	private EventsRepo eRepo;
 
 // Admin Login
 	public String Loginadmin(String username, String password) {
@@ -37,7 +37,8 @@ public class MaxService {
 		} else {
 			if (adminx.getPassword().equals(password)) {
 				return "Login Successful !";
-			} else {
+			}
+			else {
 				return "Invalid Password";
 			}
 		}
@@ -50,21 +51,25 @@ public class MaxService {
 
 //User Login
 	public String Loginx(String username, String password) {
-		User userx = uRepo.findByUsername(username);
-		if (userx == null) {
-			return "Invalid User !";
-		} else {
-			if (userx.getPassword().equals(password)) {
-				return "Login Successful !";
-			} else {
-				return "Invalid Password";
-			}
-		}
+	    User userx = uRepo.findByUsername(username);
+	    if (userx == null) {
+	        return "Invalid User !";
+	    } else {
+	        if (!userx.isIsactive()) {
+	            return "Account Disabled !";
+	        } else if (userx.getPassword().equals(password)) {
+	            return "Login Successful !";
+	        } else {
+	            return "Invalid Password";
+	        }
+	    }
 	}
+
 
 //User SignUp
 	public String SignUpx(User userx) {
 		String username = userx.getUsername();
+		String email = userx.getEmail();
 		User userxAuth = uRepo.findByUsername(username);
 		if (userxAuth == null) {
 			uRepo.save(userx);
@@ -72,7 +77,11 @@ public class MaxService {
 		} else {
 			if (userxAuth.getUsername().equals(username)) {
 				return "Username Already Exists";
-			} else {
+			}
+			else if(userxAuth.getEmail().equals(email)) {
+				return "Email Already Exists";
+			}
+			else {
 				return "Invalid Username";
 			}
 		}
@@ -86,13 +95,18 @@ public class MaxService {
 // User Data
 	public User FindUser(String user) {
 		return uRepo.findByUsername(user);
-
 	}
 
-//List Games
+
+
+//List all Games
 	public List<Data> Games() {
 		return dRepo.findAll();
 	}
+//List Active Games
+		public List<Data> GamesActive() {
+			return dRepo.findActiveGame();
+		}	
 
 //View Game
 	public Optional<Data> viewGame(Long id) {
@@ -109,8 +123,11 @@ public class MaxService {
 		}
 	}
 
-//Add Game
+//Add Game Admin
 	public Data addGame(Data gamex) {
+		int uid = 1; 
+		User user  = uRepo.findById(uid).orElse(null);
+		gamex.setAuth(user);
 		return dRepo.save(gamex);
 	}
 
@@ -139,7 +156,7 @@ public class MaxService {
 			gamez.setCoverurl1(gamex.getCoverurl1());
 			gamez.setCoverurl2(gamex.getCoverurl2());
 			gamez.setCoverurl3(gamex.getCoverurl3());
-
+//			gamez.setAuth(gamex.getAuth());
 			return dRepo.saveAndFlush(gamez);
 		} else {
 			return null;
@@ -189,35 +206,68 @@ public class MaxService {
 		return dRepo.findCoverUrl1();
 	}
 
-// List Posts
-	public List<Post> posts() {
-		return pRepo.findAll();
+// List Events
+	public List<Events> allEvents() {
+		return eRepo.findAll();
 	}
 
-// Add Post
-	public Post addPost(Post postx) {
-		return pRepo.save(postx);
+// Add Event
+	public Events addEvent(Events eventx) {
+		return eRepo.save(eventx);
 	}
 
-// Edit Post    
-	public Post editPost(Post postx, Long id) {
-		Post postz = pRepo.findById(id).orElse(postx);
-		if (postz != null) {
-			postz.setPosttitle(postx.getPosttitle());
-			postz.setPostcontent(postx.getPostcontent());
-			postz.setPostauthorid(postx.getPostauthorid());
-			postz.setPostsource(postx.getPostsource());
-			postx.setPosttitle(postx.getPosttitle());
-			return pRepo.saveAndFlush(postz);
+// Edit Event    
+	public Events editEvent(Events eventx, Long id) {
+		Events eventz = eRepo.findById(id).orElse(eventx);
+		if (eventz != null) {
+			eventz.setEventtitle(eventx.getEventtitle());
+			eventz.setEventcontent(eventx.getEventcontent());
+			eventz.setEventauthorid(eventx.getEventauthorid());
+			eventz.setEventsource(eventx.getEventsource());
+			eventx.setEventtitle(eventx.getEventtitle());
+			return eRepo.saveAndFlush(eventz);
 		} else {
 			return null;
 		}
 
 	}
 
-// Delete Post
-	public String deletePost(Long id) {
+// Delete Event
+	public String deleteEvent(Long id) {
 		dRepo.deleteById(id);
-		return "Post Deleted";
+		return "Event Deleted";
 	}
+// Enable / Disable user
+public String toggleUserStatus(String username, boolean enable) {
+    User user = uRepo.findByUsername(username);
+    if (user != null) {
+        user.setIsactive(enable);
+        uRepo.save(user);
+        return enable ? "User Enabled" : "User Disabled";
+    } else {
+        return "User not found";
+    }
+}
+//Enable / Disable game
+public String toggleGameStatus(Long id, boolean enable) {
+    Data game = dRepo.findById(id).orElse(null);
+    if (game != null) {
+    	game.setGameisenabled(enable);
+        dRepo.save(game);
+        return enable ? "Game Enabled" : "Game Disabled";
+    } else {
+        return "Game not found";
+    }
+}
+//Enable / Disable game
+public String toggleGamePin(Long id, boolean enable) {
+  Data game = dRepo.findById(id).orElse(null);
+  if (game != null) {
+  	game.setGameispinned(enable);
+      dRepo.save(game);
+      return enable ? "Game Pinned" : "Game Unpinned";
+  } else {
+      return "Game pin not found";
+  }
+}
 }

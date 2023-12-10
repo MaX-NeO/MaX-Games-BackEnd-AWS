@@ -13,12 +13,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.spring.maxgames.AuthModel.Admin;
 import com.spring.maxgames.AuthModel.User;
 import com.spring.maxgames.DataModel.Data;
-import com.spring.maxgames.PostModel.Post;
+import com.spring.maxgames.EventModel.Events;
 import com.spring.maxgames.Service.MaxService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -73,10 +74,15 @@ public class MaxController {
 	}	
 	
 	//Data
-	@Tag(name = "Active Games", description = "Current Active Games")
+	@Tag(name = "All Games", description = "Both Active/Inactive  Games")
 	@GetMapping("/games")
 	private List<Data> Games(){
 		return servicex.Games();
+	}
+	@Tag(name = "Active Games", description = "Current Active Games")
+	@GetMapping("/game/active")
+	private List<Data> GamesActive(){
+		return servicex.GamesActive();
 	}
 	@Tag(name = "Sort Game by ID", description = "View indudual Game Data")
 	@GetMapping("/game/{id}")
@@ -147,22 +153,44 @@ public class MaxController {
     }
 	
 	
-	
-	@GetMapping("/posts")
-	public List<Post> Posts(){
-		return servicex.posts();
+	@Tag(name="Get Events", description = "List all Events Data")
+	@GetMapping("/events")
+	public List<Events> AllEvents(){
+		return servicex.allEvents();
 	}
-	@PostMapping("/post")
-	public Post addPost(@RequestBody Post postx) {
-		return servicex.addPost(postx);
+
+	@Tag(name="Add Event", description = "Add new Event")
+	@PostMapping("/event/add")
+	public Events addPost(@RequestBody Events eventx) {
+		return servicex.addEvent(eventx);
 	}
-	@PutMapping("/post/{id}")
-	public Post editPost(@RequestBody Post postx, @PathVariable Long id) {
-		return servicex.editPost(postx, id);
+
+	@Tag(name="Edit Event", description = "Edit existing Event")
+	@PutMapping("/event/edit/{id}")
+	public Events editEvent(@RequestBody Events eventx, @PathVariable Long id) {
+		return servicex.editEvent(eventx, id);
 	}
-	@DeleteMapping("/post/{id}")
+
+	@Tag(name="Delete Event", description = "Delete existing Event")
+	@DeleteMapping("/event/delete/{id}")
 	public String deletePost(@PathVariable Long id) {
-		return servicex.deletePost(id);
+		return servicex.deleteEvent(id);
 	}
 	
+	@Tag(name = "Enable or Disable User", description = "Enable or Disable User by Username")
+	@PutMapping("/auth/user/status/{username}")
+	private String toggleUserStatus(@PathVariable String username, @RequestParam boolean enable) {
+	    return servicex.toggleUserStatus(username, enable);
+	}
+	@Tag(name = "Enable or Disable Game", description = "Enable or Disable Game by ID")
+	@PutMapping("/game/status/{id}")
+	private String toggleGameStatus(@PathVariable Long id, @RequestParam boolean enable) {
+	    return servicex.toggleGameStatus(id, enable);
+	}
+
+	@Tag(name = "Enable or Disable Game Pin", description = "Enable or Disable Game Pin by ID")
+	@PutMapping("/game/pin/{id}")
+	private String toggleGamePin(@PathVariable Long id, @RequestParam boolean enable) {
+	    return servicex.toggleGamePin(id, enable);
+	}
 }

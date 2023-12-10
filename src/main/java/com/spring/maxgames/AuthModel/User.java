@@ -19,10 +19,9 @@ public class User {
 	private String password;
 	@Column(unique = true)
 	private String email;
-	@Column(unique = true)
 	private Long phone;
 	private int age;
-	
+	private boolean isactive;
 
 	public int getId() {
 		return id;
@@ -59,6 +58,12 @@ public class User {
 	}
 	public void setAge(int age) {
 		this.age = age;
+	}
+	public boolean isIsactive() {
+		return isactive;
+	}
+	public void setIsactive(boolean isactive) {
+		this.isactive = isactive;
 	}
 
 

@@ -27,6 +27,8 @@ public class Data {
 	private String coverurl1;
 	private String coverurl2;
 	private String coverurl3;
+	private boolean gameisenabled;
+	private boolean gameispinned;
     @ManyToOne
     @JoinColumn(name = "auth_id")
     private User auth;
@@ -109,6 +111,18 @@ public class Data {
 	}
 	public void setAuth(User auth) {
 		this.auth = auth;
+	}
+	public boolean isGameisenabled() {
+		return gameisenabled;
+	}
+	public void setGameisenabled(boolean gameisenabled) {
+		this.gameisenabled = gameisenabled;
+	}
+	public boolean isGameispinned() {
+		return gameispinned;
+	}
+	public void setGameispinned(boolean gameispinned) {
+		this.gameispinned = gameispinned;
 	}
 
 
