@@ -56,9 +56,9 @@ public class MaxService {
 	        return "Invalid User !";
 	    } else {
 	        if (!userx.isIsactive()) {
-	            return "Account Disabled !";
+	            return "Account Disabled";
 	        } else if (userx.getPassword().equals(password)) {
-	            return "Login Successful !";
+	            return "Login Successful";
 	        } else {
 	            return "Invalid Password";
 	        }
